@@ -1,0 +1,11 @@
+{
+  "name": "js-electronics-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^2.0.2",
+    "sqlite3": "^5.1.7",
+    "exceljs": "^4.4.0"
+  }
+}
