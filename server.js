@@ -10,11 +10,14 @@ const BackupScheduler = require('./scripts/backup-scheduler');
 require('dotenv').config();
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
+
+// React 빌드 파일 서빙 (웹 배포용)
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 // 백업 스케줄러 인스턴스 생성
 const backupScheduler = new BackupScheduler();
@@ -2724,8 +2727,14 @@ setInterval(() => {
 // 서버 시작 시 즉시 한 번 실행
 setTimeout(checkLowStockAlerts, 5000); // 5초 후 실행
 
+// React Router 지원 (모든 경로를 React 앱으로 라우팅)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
+  console.log(`웹 브라우저에서 접속: http://localhost:${PORT}`);
   
   // 서버 시작 시 일일 자동 백업 스케줄 시작
   backupScheduler.startScheduler('daily');

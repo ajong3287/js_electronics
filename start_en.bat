@@ -44,7 +44,51 @@ if %errorlevel% neq 0 (
 echo OK: Package installation complete
 echo.
 
-echo [Step 3] Starting server...
+echo [Step 3] Building client application...
+echo Building React frontend (this may take 2-3 minutes)...
+cd client
+
+echo - Installing client dependencies...
+call npm install --no-audit --no-fund --silent --legacy-peer-deps
+if %errorlevel% neq 0 (
+    echo ERROR: Client package installation failed
+    echo Trying with legacy peer deps...
+    call npm install --no-audit --no-fund --silent --legacy-peer-deps --force
+    if %errorlevel% neq 0 (
+        echo ERROR: Client installation completely failed
+        echo.
+        pause
+        exit /b 1
+    )
+)
+
+echo - Building React application...
+set GENERATE_SOURCEMAP=false
+call npm run build
+if %errorlevel% neq 0 (
+    echo ERROR: Client build failed
+    echo Checking build requirements...
+    dir build >nul 2>&1
+    if %errorlevel% neq 0 (
+        echo Build directory missing - critical error
+    )
+    echo.
+    pause
+    exit /b 1
+)
+
+echo - Verifying build output...
+if not exist "build\index.html" (
+    echo ERROR: Build incomplete - index.html missing
+    pause
+    exit /b 1
+)
+
+cd ..
+echo OK: Client build complete and verified
+echo.
+
+echo [Step 4] Starting server...
 echo Server will start on port 3001
 echo URL: http://localhost:3001
 echo.
@@ -52,20 +96,30 @@ echo Press Ctrl+C to stop the server
 echo ==========================================
 
 echo Starting ERP server...
-start /min npm start
+start "" node server.js
 
 echo Waiting for server to start...
-timeout /t 5 >nul
+timeout /t 8 >nul
 
 echo Testing connection...
-curl -s http://localhost:3001 >nul 2>&1
+powershell -Command "try { Invoke-WebRequest -Uri http://localhost:3001 -UseBasicParsing -TimeoutSec 5 | Out-Null; exit 0 } catch { exit 1 }" >nul 2>&1
 if %errorlevel% neq 0 (
     echo.
     echo ⚠️  Connection test failed
-    echo Please wait a moment and try manually:
-    echo Open browser and go to: http://localhost:3001
-    echo.
-    echo If still not working, run: troubleshoot.bat
+    echo Checking if server is starting...
+    timeout /t 3 >nul
+    powershell -Command "try { Invoke-WebRequest -Uri http://localhost:3001 -UseBasicParsing -TimeoutSec 5 | Out-Null; exit 0 } catch { exit 1 }" >nul 2>&1
+    if %errorlevel% neq 0 (
+        echo.
+        echo Please wait a moment and try manually:
+        echo Open browser and go to: http://localhost:3001
+        echo.
+        echo If still not working, run: troubleshoot.bat
+    ) else (
+        echo ✅ Server connection OK (after retry)
+        echo Opening browser...
+        start http://localhost:3001
+    )
 ) else (
     echo ✅ Server connection OK
     echo Opening browser...
@@ -73,12 +127,8 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo Server is running in background window
-echo To stop: Close all command windows
-if %errorlevel% neq 0 (
-    echo.
-    echo ERROR: Server start failed
-    echo Port 3001 might be in use
-    echo.
-)
+echo Server is running in command window
+echo To stop: Press Ctrl+C in the server window
+echo.
+echo IMPORTANT: Keep the black command window open while using the ERP
 pause

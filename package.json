@@ -8,10 +8,14 @@
     "dev": "nodemon server.js",
     "client": "cd client && npm start",
     "dev-all": "concurrently \"npm run dev\" \"npm run client\"",
+    "build": "cd client && npm run build",
+    "build-and-start": "npm run build && npm start",
+    "vercel-build": "cd client && npm install && npm run build",
     "electron": "electron .",
     "electron-dev": "concurrently --kill-others \"npm:client\" \"NODE_ENV=development electron .\"",
     "build-client": "cd client && npm run build",
     "build-win": "npm run build-client && electron-builder --win",
+    "build-portable": "npm run build-client && electron-builder --win --config.nsis.oneClick=false --config.portable",
     "build-mac": "npm run build-client && electron-builder --mac",
     "dist": "npm run build-client && electron-builder"
   },
@@ -73,15 +77,31 @@
             "x64",
             "ia32"
           ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
         }
       ]
+    },
+    "portable": {
+      "artifactName": "JS일렉트로닉-ERP-Portable-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "JS일렉트로닉 ERP"
+      "shortcutName": "JS일렉트로닉 ERP",
+      "allowElevation": true,
+      "perMachine": true,
+      "runAfterFinish": false,
+      "installerLanguages": ["ko_KR"],
+      "license": "LICENSE.txt",
+      "warningsAsErrors": false,
+      "deleteAppDataOnUninstall": true
     }
   }
 }
