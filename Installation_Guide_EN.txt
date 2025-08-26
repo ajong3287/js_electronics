@@ -1,0 +1,68 @@
+====================================
+JS Electronics ERP System v1.0
+Installation Guide for Windows
+====================================
+
+[System Requirements]
+- Windows 10/11
+- Node.js 18.x or higher
+- Internet connection (for first installation)
+
+[Installation Steps]
+
+1. Download and Install Node.js:
+   - Visit: https://nodejs.org
+   - Download: LTS Version (Recommended)
+   - Install with Administrator rights
+   - Restart your computer
+
+2. Extract ZIP file:
+   - Extract "JS_Electronics_ERP_Windows_v1.0.zip" 
+   - Recommended location: Desktop or Documents folder
+
+3. Run the application:
+   - Double-click "start_en.bat" file
+   - Wait for automatic installation (1-2 minutes first time)
+   - Browser will open automatically
+   - Access URL: http://localhost:3001
+
+[Features]
+- Sales Management (Excel upload/analysis)
+- Customer Management
+- Transaction Reports (PDF/Excel generation)
+- Sales Analytics with Charts
+- Automatic Backup (Daily at 2:00 AM)
+
+[File Structure]
+- Database: database/erp.db
+- Backups: backups/ folder
+- Uploads: uploads/ folder
+
+[Troubleshooting]
+
+Problem: "Node.js is not installed" error
+Solution: Install Node.js from https://nodejs.org and restart computer
+
+Problem: Port 3001 already in use
+Solution: Close other applications using port 3001, or restart computer
+
+Problem: Package installation fails
+Solution: Check internet connection, try running as Administrator
+
+Problem: Browser doesn't open automatically
+Solution: Manually open browser and go to http://localhost:3001
+
+[How to Stop]
+- Press Ctrl+C in the black window
+- Or simply close the black window
+
+[Technical Support]
+If you encounter issues, please provide:
+- Windows version
+- Error message screenshot
+- Contents of server.log file
+
+====================================
+Build Date: August 25, 2025
+Version: 1.0.0 (Production Ready)
+====================================
